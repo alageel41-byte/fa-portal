@@ -90,37 +90,34 @@ blockquote{position:relative;margin:22px 0;padding:18px 22px;border-right:5px so
 </style>
 
 
-
-<style id="fa-v31-final-executive-polish">
+<style id="fa-v31-logo-fix">
 :root{
-  --blue:#0a2f5e;
-  --blue2:#0a2a57;
-  --navy:#06152b;
-  --gold:#d4af7a;
-  --ink:#0f172a;
-  --muted:#64748b;
-  --line:#e2e8f0;
-  --paper:#ffffff;
-  --soft:#f8f9fc;
-
-  --cat-saudi:#1e6b4f;
-  --cat-world:#1e4a8c;
-  --cat-economy:#9c7a3f;
-  --cat-sports:#9c3f3f;
-  --cat-education:#2a4a8c;
-  --cat-health:#2a7a6f;
-  --cat-weather:#3a7a9c;
-  --cat-tech:#3a3a6b;
+  --fa-blue:#133f7a;
+  --fa-navy:#06152b;
+  --fa-blue2:#0a2a57;
+  --fa-gold:#c9a24a;
+  --fa-ink:#111827;
+  --fa-muted:#667085;
+  --fa-line:#e3e8f0;
+  --cat-saudi:#2f7a4d;
+  --cat-world:#2f5f9f;
+  --cat-economy:#8a681f;
+  --cat-sports:#8f4f36;
+  --cat-education:#28558f;
+  --cat-health:#34756f;
+  --cat-weather:#3d779d;
+  --cat-tech:#48466d;
 }
 
+/* خلفية رسمية بيضاء بنقشة مؤسسية واضحة وخفيفة */
 body{
   background:
-    radial-gradient(circle at 7% 0%, rgba(10,47,94,.145), transparent 31%),
-    radial-gradient(circle at 94% 7%, rgba(212,175,122,.125), transparent 29%),
-    linear-gradient(135deg, rgba(10,47,94,.058) 0 1px, transparent 1px) 0 0/32px 32px,
-    linear-gradient(45deg, rgba(212,175,122,.040) 0 1px, transparent 1px) 0 0/56px 56px,
-    linear-gradient(180deg,#ffffff 0%,#f8f9fc 50%,#ffffff 100%) !important;
-  color:var(--ink) !important;
+    radial-gradient(circle at 8% 0%, rgba(19,63,122,.13), transparent 30%),
+    radial-gradient(circle at 94% 9%, rgba(201,162,74,.12), transparent 28%),
+    linear-gradient(135deg, rgba(19,63,122,.050) 0 1px, transparent 1px) 0 0/34px 34px,
+    linear-gradient(45deg, rgba(201,162,74,.035) 0 1px, transparent 1px) 0 0/54px 54px,
+    linear-gradient(180deg,#fff 0%,#f7f9fd 52%,#fff 100%) !important;
+  color:var(--fa-ink) !important;
 }
 body:before{
   content:"";
@@ -129,42 +126,33 @@ body:before{
   z-index:-1;
   pointer-events:none;
   background:
-    radial-gradient(ellipse at 13% 23%, rgba(10,47,94,.075), transparent 43%),
-    radial-gradient(ellipse at 89% 30%, rgba(212,175,122,.055), transparent 40%),
-    linear-gradient(120deg, transparent 0 46%, rgba(10,47,94,.034) 46.2%, transparent 47.8% 100%);
-}
-body:after{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 18% 72%, rgba(10,47,94,.035) 0 120px, transparent 121px),
-    radial-gradient(circle at 82% 60%, rgba(212,175,122,.030) 0 150px, transparent 151px);
+    radial-gradient(ellipse at 14% 22%, rgba(19,63,122,.07), transparent 42%),
+    radial-gradient(ellipse at 88% 32%, rgba(201,162,74,.055), transparent 40%),
+    linear-gradient(120deg, transparent 0 46%, rgba(19,63,122,.032) 46.2%, transparent 47.8% 100%);
 }
 
-/* Header */
+/* شريط علوي رسمي */
 .eyebar{
-  background:var(--navy) !important;
+  background:var(--fa-navy) !important;
   color:#dbeafe !important;
-  border-bottom:1px solid rgba(255,255,255,.12) !important;
+  border-bottom:1px solid rgba(255,255,255,.10) !important;
 }
+
+/* الهيدر والشعار: التعديل الأساسي */
 .header{
   position:sticky !important;
   top:0 !important;
   z-index:50 !important;
   background:rgba(255,255,255,.975) !important;
   backdrop-filter:blur(18px) !important;
-  border-bottom:1px solid rgba(226,232,240,.96) !important;
-  box-shadow:0 8px 26px rgba(15,23,42,.035) !important;
+  border-bottom:1px solid rgba(214,221,232,.94) !important;
 }
 .header .inner{
   display:flex !important;
   align-items:center !important;
   justify-content:space-between !important;
-  gap:34px !important;
-  padding:34px 0 !important;
+  gap:28px !important;
+  padding:30px 0 !important;
 }
 .header a[aria-label="FA Media Solutions"]{
   display:flex !important;
@@ -172,12 +160,12 @@ body:after{
   flex-shrink:0 !important;
 }
 
-/* Logo: +25–30% with breathing space */
+/* تكبير الشعار فعلياً */
 .logo.fa-logo-official,
 .logo,
 .fa-logo-official{
-  width:780px !important;
-  max-width:88vw !important;
+  width:620px !important;
+  max-width:84vw !important;
   height:auto !important;
   max-height:none !important;
   display:block !important;
@@ -186,59 +174,49 @@ body:after{
   box-shadow:none !important;
   border:0 !important;
   background:transparent !important;
-  margin:4px 0 !important;
 }
 
-/* Navigation stays secondary */
+/* القوائم أهدأ من الشعار */
 .nav{
   color:#334155 !important;
   font-size:14px !important;
-  gap:18px !important;
 }
 .nav a{
   font-weight:850 !important;
   border-bottom:2px solid transparent !important;
 }
 .nav a:hover{
-  color:var(--blue) !important;
-  border-color:var(--gold) !important;
+  color:var(--fa-blue) !important;
+  border-color:var(--fa-gold) !important;
 }
 
-/* Hero premium polish */
-.hero{padding:50px 0 32px !important}
+/* Hero أزرق مؤسسي */
 .hero-main{
-  border-radius:40px !important;
+  border-radius:38px !important;
   background:
-    radial-gradient(circle at 12% 8%, rgba(255,255,255,.14), transparent 28%),
-    linear-gradient(135deg,rgba(6,21,43,.995),rgba(10,47,94,.99) 58%,rgba(10,42,87,.99)) !important;
-  box-shadow:0 40px 105px rgba(6,21,43,.30) !important;
-}
-.hero-main:before{
-  border-color:rgba(255,255,255,.060) !important;
+    radial-gradient(circle at 12% 8%, rgba(255,255,255,.13), transparent 28%),
+    linear-gradient(135deg,rgba(6,21,43,.99),rgba(19,63,122,.99) 58%,rgba(10,42,87,.99)) !important;
+  box-shadow:0 36px 96px rgba(6,21,43,.28) !important;
 }
 .badge{
-  background:rgba(255,255,255,.105) !important;
+  background:rgba(255,255,255,.10) !important;
   border:1px solid rgba(255,255,255,.30) !important;
   font-weight:850 !important;
 }
-.lead{color:#dbeafe !important}
-.stat{
-  background:rgba(255,255,255,.10) !important;
-  border:1px solid rgba(255,255,255,.15) !important;
-}
+.lead{ color:#dbeafe !important; }
 
-/* Buttons */
+/* الأزرار */
 .btn{
   border-radius:15px !important;
   font-weight:950 !important;
-  transition:transform .22s ease, box-shadow .22s ease, background .22s ease !important;
+  transition:transform .22s ease, box-shadow .22s ease !important;
 }
 .btn:hover{
   transform:translateY(-1px) !important;
   box-shadow:0 10px 24px rgba(6,21,43,.17) !important;
 }
 .btn.primary{
-  background:var(--gold) !important;
+  background:var(--fa-gold) !important;
   color:#111827 !important;
 }
 .btn.secondary{
@@ -247,25 +225,19 @@ body:after{
   color:#fff !important;
 }
 
-/* Editorial cards */
-.card,
-.category,
-.news-card{
-  background:rgba(255,255,255,.988) !important;
-  border:1px solid rgba(226,232,240,.96) !important;
+/* البطاقات */
+.card,.category,.news-card{
+  background:rgba(255,255,255,.985) !important;
+  border:1px solid rgba(214,221,232,.94) !important;
   box-shadow:0 18px 50px rgba(15,23,42,.078) !important;
 }
-.card:hover,
-.category:hover{
+.card:hover,.category:hover{
   transform:translateY(-2px) !important;
   box-shadow:0 24px 64px rgba(15,23,42,.11) !important;
-  border-color:rgba(212,175,122,.42) !important;
-}
-.section-title h2{
-  color:var(--navy) !important;
+  border-color:rgba(201,162,74,.36) !important;
 }
 
-/* Category color matrix */
+/* ألوان أقسام هادئة */
 .category{
   position:relative !important;
   overflow:hidden !important;
@@ -276,9 +248,9 @@ body:after{
   position:absolute !important;
   right:0 !important;
   top:0 !important;
-  width:6px !important;
+  width:5px !important;
   height:100% !important;
-  background:var(--blue) !important;
+  background:var(--fa-blue) !important;
 }
 .category:nth-child(1):before{background:var(--cat-saudi) !important}
 .category:nth-child(2):before{background:var(--cat-world) !important}
@@ -298,7 +270,7 @@ body:after{
 .category:nth-child(7) b{color:var(--cat-weather) !important}
 .category:nth-child(8) b{color:var(--cat-tech) !important}
 
-/* Tags */
+/* تاغات الأخبار أهدأ */
 .tag{
   border-radius:999px !important;
   font-weight:950 !important;
@@ -309,9 +281,9 @@ body:after{
   border-color:#f1dfaa !important;
 }
 .news-layout .news-card:nth-child(2) .tag{
-  background:#f8eeee !important;
+  background:#f8eee8 !important;
   color:var(--cat-sports) !important;
-  border-color:#ead2d2 !important;
+  border-color:#ead2c2 !important;
 }
 .news-layout .news-card:nth-child(3) .tag{
   background:#f4f4f5 !important;
@@ -319,25 +291,25 @@ body:after{
   border-color:#e4e4e7 !important;
 }
 
-/* Founding declaration */
+/* إعلان التدشين */
 .launch{
   background:
-    radial-gradient(circle at 4% 0%, rgba(10,47,94,.072), transparent 28%),
-    linear-gradient(135deg,#ffffff,#f8f9fc) !important;
-  border:1px solid rgba(226,232,240,.96) !important;
+    radial-gradient(circle at 4% 0%, rgba(19,63,122,.065), transparent 27%),
+    linear-gradient(135deg,#fff,#f8fafc) !important;
+  border:1px solid rgba(214,221,232,.94) !important;
   box-shadow:0 17px 46px rgba(15,23,42,.064) !important;
 }
 blockquote{
-  border-right:5px solid var(--gold) !important;
-  background:#f8f9fc !important;
+  border-right:5px solid var(--fa-gold) !important;
+  background:#f8fafc !important;
 }
 
 /* Footer */
 .footer{
-  background:var(--navy) !important;
+  background:var(--fa-navy) !important;
 }
-.footer strong{color:#fff !important}
-.fa-license-line{
+.footer strong{ color:#fff !important; }
+.license-bar{
   padding-top:14px;
   margin-top:18px;
   border-top:1px solid rgba(255,255,255,.12);
@@ -346,7 +318,7 @@ blockquote{
 }
 
 /* Responsive */
-@media(max-width:1180px){
+@media(max-width:1060px){
   .header .inner{
     align-items:flex-start !important;
     flex-direction:column !important;
@@ -354,7 +326,7 @@ blockquote{
   .logo.fa-logo-official,
   .logo,
   .fa-logo-official{
-    width:600px !important;
+    width:500px !important;
   }
   .nav{width:100% !important}
 }
@@ -362,12 +334,64 @@ blockquote{
   .logo.fa-logo-official,
   .logo,
   .fa-logo-official{
-    width:395px !important;
-    max-width:92vw !important;
+    width:365px !important;
+    max-width:90vw !important;
   }
   .header .inner{
-    padding:26px 0 !important;
+    padding:24px 0 !important;
   }
+}
+</style>
+
+
+<style id="fa-news-json-style">
+#fa-json-news-section{
+  margin-top:34px;
+}
+#fa-json-news-section .fa-json-news-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:18px;
+}
+#fa-json-news-section .fa-json-news-card{
+  background:rgba(255,255,255,.988);
+  border:1px solid rgba(226,232,240,.96);
+  border-radius:24px;
+  box-shadow:0 18px 50px rgba(15,23,42,.078);
+  padding:24px;
+  min-height:220px;
+}
+#fa-json-news-section .fa-json-news-card.featured{
+  min-height:320px;
+}
+#fa-json-news-section .fa-json-news-tag{
+  display:inline-flex;
+  background:#eff6ff;
+  color:#0a2f5e;
+  border:1px solid #dbeafe;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:12px;
+  font-weight:950;
+}
+#fa-json-news-section h3{
+  font-size:24px;
+  line-height:1.35;
+  margin:10px 0;
+}
+#fa-json-news-section .featured h3{
+  font-size:36px;
+}
+#fa-json-news-section .fa-json-news-meta{
+  font-size:13px;
+  color:#64748b;
+  margin-bottom:10px;
+}
+#fa-json-news-section p{
+  color:#475569;
+}
+@media(max-width:960px){
+  #fa-json-news-section .fa-json-news-grid{grid-template-columns:1fr}
 }
 </style>
 
@@ -489,7 +513,26 @@ blockquote{
       <blockquote>كل خبر ننشره اليوم... يبني قيمة الغد.</blockquote>
       <p><strong>Founder & Executive Director</strong><br>فهد بن عقيل ذخير العتيبي<br>Fahad ALageel</p>
     </section>
-  </main>
+  
+<!-- FA_NEWS_JSON_INTEGRATION_START -->
+<section class="container" id="fa-json-news-section" aria-label="أخبار FA Media Solutions">
+  <div class="section-title">
+    <div>
+      <h2>آخر الأخبار المنشورة</h2>
+      <p>يتم تحديث هذه الأخبار من ملف news.json.</p>
+    </div>
+  </div>
+  <div id="fa-json-news-grid" class="fa-json-news-grid">
+    <article class="fa-json-news-card featured">
+      <span class="fa-json-news-tag">تحميل</span>
+      <h3>جاري تحميل الأخبار...</h3>
+      <p>سيتم عرض الأخبار من ملف news.json عند توفرها.</p>
+    </article>
+  </div>
+</section>
+<!-- FA_NEWS_JSON_INTEGRATION_END -->
+
+</main>
 
   <footer class="footer">
     <div class="container footer-row">
@@ -498,5 +541,84 @@ blockquote{
     </div>
   <div class="container license-bar"><strong>إعلامي مرخص</strong> | Licensed Media Professional (Multimedia Designer)</div>
 </footer>
+
+<script id="fa-news-json-script">
+(function(){
+  const categoryColors = {
+    "السعودية":"#1e6b4f",
+    "العالم":"#1e4a8c",
+    "الاقتصاد":"#9c7a3f",
+    "FA SPORTS":"#9c3f3f",
+    "التعليم":"#2a4a8c",
+    "الصحة":"#2a7a6f",
+    "الطقس":"#3a7a9c",
+    "التقنية":"#3a3a6b"
+  };
+
+  function escapeHTML(value){
+    return String(value || "").replace(/[&<>"']/g, function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch];
+    });
+  }
+
+  function formatDate(value){
+    if(!value) return "";
+    try{
+      return new Date(value).toLocaleDateString("ar-SA");
+    }catch(e){
+      return value;
+    }
+  }
+
+  function renderNews(items){
+    const grid = document.getElementById("fa-json-news-grid");
+    if(!grid) return;
+
+    const published = (Array.isArray(items) ? items : [])
+      .filter(function(n){ return (n.status || "published") !== "draft"; })
+      .sort(function(a,b){
+        if(a.featured && !b.featured) return -1;
+        if(!a.featured && b.featured) return 1;
+        return String(b.date || b.createdAt || "").localeCompare(String(a.date || a.createdAt || ""));
+      });
+
+    if(!published.length){
+      grid.innerHTML = '<article class="fa-json-news-card featured"><span class="fa-json-news-tag">تنبيه</span><h3>لا توجد أخبار منشورة بعد</h3><p>أضف الأخبار داخل ملف news.json ثم حدّث الصفحة.</p></article>';
+      return;
+    }
+
+    grid.innerHTML = published.slice(0, 6).map(function(n, index){
+      const color = categoryColors[n.category] || "#0a2f5e";
+      const title = escapeHTML(n.title);
+      const summary = escapeHTML(n.summary || n.content || "");
+      const category = escapeHTML(n.category || "خبر");
+      const date = escapeHTML(formatDate(n.date || n.createdAt));
+      const source = escapeHTML(n.source || "");
+      const meta = [date, source].filter(Boolean).join(" — ");
+
+      return '<article class="fa-json-news-card '+(index === 0 ? 'featured' : '')+'">'
+        + '<span class="fa-json-news-tag" style="background:'+color+'22;color:'+color+';border-color:'+color+'44">'+category+'</span>'
+        + '<h3>'+title+'</h3>'
+        + '<div class="fa-json-news-meta">'+meta+'</div>'
+        + '<p>'+summary+'</p>'
+        + '</article>';
+    }).join("");
+  }
+
+  fetch("news.json", {cache:"no-store"})
+    .then(function(res){
+      if(!res.ok) throw new Error("news.json not found");
+      return res.json();
+    })
+    .then(renderNews)
+    .catch(function(){
+      const grid = document.getElementById("fa-json-news-grid");
+      if(grid){
+        grid.innerHTML = '<article class="fa-json-news-card featured"><span class="fa-json-news-tag">تنبيه</span><h3>لم يتم العثور على news.json</h3><p>تأكد أن ملف news.json مرفوع بجانب index.html في المستودع.</p></article>';
+      }
+    });
+})();
+</script>
+
 </body>
 </html>
