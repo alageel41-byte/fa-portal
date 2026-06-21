@@ -1,44 +1,38 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <title>FA Media Solutions | لوحة تحكم الإدارة</title>
-    <style>
-        :root { --navy: #06152b; --blue: #0a2f5e; --gold: #d4af7a; --ink: #0f172a; --bg: #f8fafc; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--ink); margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h1 { color: var(--navy); text-align: center; font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
-        label { font-weight: bold; color: var(--blue); display: block; margin-top: 10px; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
-        button { background: var(--navy); color: var(--gold); border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: 0.3s; }
-        button:hover { background: var(--blue); }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
-        .delete-btn { background: #dc2626 !important; color: white !important; padding: 5px 15px !important; width: auto !important; margin-top: 0 !important; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FA Admin | إدارة الأخبار</title>
+<style>
+:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0}
+body{margin:0;font-family:Tahoma,sans-serif;background:#f8f9fc;color:var(--ink);padding:20px}
+.container{max-width:800px;margin:auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:25px;margin-bottom:20px;box-shadow:0 4px 6px rgba(0,0,0,0.05)}
+h1{color:var(--navy);text-align:center}
+input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid var(--line);border-radius:10px;box-sizing:border-box}
+button{background:var(--navy);color:var(--gold);border:none;padding:12px 20px;border-radius:10px;cursor:pointer;width:100%;font-weight:bold}
+.news-item{display:flex;justify-content:space-between;padding:15px;border-bottom:1px solid var(--line);align-items:center}
+</style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>FA Media - لوحة التحكم</h1>
-        <label>عنوان الخبر</label>
-        <input id="title" placeholder="أدخل العنوان...">
-        <label>الملخص</label>
-        <input id="summary" placeholder="أدخل ملخص الخبر...">
-        <label>النص الكامل</label>
-        <textarea id="content" placeholder="نص الخبر..." rows="5"></textarea>
-        <button id="publishBtn">نشر الخبر في الموقع</button>
+        <h1>لوحة تحكم FA Media</h1>
+        <input id="title" placeholder="عنوان الخبر">
+        <input id="image" placeholder="رابط الصورة (URL)">
+        <textarea id="summary" placeholder="الملخص" rows="3"></textarea>
+        <button id="publishBtn">نشر الخبر</button>
     </div>
-    
     <div class="card">
-        <h2 style="text-align:center; color:var(--navy);">الأخبار المنشورة</h2>
-        <div id="list">جاري تحميل الأخبار...</div>
+        <h3>الأخبار الحالية</h3>
+        <div id="list">جاري التحميل...</div>
     </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const db = getFirestore(initializeApp({
     apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
@@ -48,20 +42,21 @@ const db = getFirestore(initializeApp({
 const $ = id => document.getElementById(id);
 
 async function load() {
-    const snap = await getDocs(collection(db, "news"));
+    const q = query(collection(db, "news"), orderBy("date", "desc"));
+    const snap = await getDocs(q);
     $("list").innerHTML = snap.docs.map(d => `
-        <div class="item">
-            <span>${d.data().title}</span>
-            <button class="delete-btn" onclick="deleteDoc(doc(db,'news','${d.id}')); location.reload();">حذف</button>
+        <div class="news-item">
+            <b>${d.data().title || 'بدون عنوان'}</b>
+            <button style="background:red; color:white; width:auto" onclick="deleteDoc(doc(db,'news','${d.id}')); location.reload();">حذف</button>
         </div>`).join("");
 }
 
 $("publishBtn").addEventListener("click", async () => {
-    if(!$("title").value) return alert("الرجاء كتابة العنوان");
-    await addDoc(collection(db, "news"), { 
-        title: $("title").value, 
-        summary: $("summary").value, 
-        content: $("content").value 
+    await addDoc(collection(db, "news"), {
+        title: $("title").value,
+        image: $("image").value,
+        summary: $("summary").value,
+        date: new Date().toISOString() // تاريخ دقيق للترتيب
     });
     location.reload();
 });
