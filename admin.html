@@ -1,0 +1,75 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+// تمت إضافة مكتبة المصادقة للتأكد من الصلاحيات الإدارية الآمنة
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
+    authDomain: "fa-media-portal.firebaseapp.com",
+    projectId: "fa-media-portal",
+    storageBucket: "fa-media-portal.firebasestorage.app",
+    messagingSenderId: "817175807213",
+    appId: "1:817175807213:web:eda206611dd78ce89038e4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app); // تفعيل الوصول الإداري الآمن
+const $ = id => document.getElementById(id);
+
+// ... (يرجى إبقاء باقي الدوال المساعدة مثل clearForm و itemFromForm كما هي) ...
+
+async function addEvent() {
+    const item = itemFromForm();
+    if(!item.title || !item.summary || !item.content){
+        status("أكمل العنوان والملخص ونص الحدث.", "bad");
+        return;
+    }
+    $("publishBtn").disabled = true;
+    status("جاري النشر في Firebase...");
+    try {
+        // توجيه البيانات إلى محرك الأحداث (events) بدلاً من الأخبار
+        await addDoc(collection(db, "events"), item);
+        status("تم تسجيل الحدث بنجاح.", "ok");
+        clearForm();
+        await loadEvents();
+    } catch(e) {
+        console.error(e);
+        status("فشل النشر. راجع قواعد الصلاحيات في Firestore.", "bad");
+    } finally {
+        $("publishBtn").disabled = false;
+    }
+}
+
+async function loadEvents() {
+    const list = $("list");
+    list.textContent = "جاري التحميل...";
+    try {
+        // جلب البيانات من محرك الأحداث
+        const snap = await getDocs(collection(db, "events"));
+        const events = snap.docs.map(d => ({docId: d.id, ...d.data()}));
+        
+        $("jsonPreview").textContent = JSON.stringify(events, null, 2);
+        if(!events.length){
+            list.textContent = "لا توجد أحداث مسجلة بعد.";
+            return;
+        }
+        list.innerHTML = events.map(n => `<div class="news-item"><b>${escapeHTML(n.title)}</b><span>${escapeHTML(n.category)} — ${escapeHTML(n.date)}</span><div class="actions"><button class="danger" data-delete="${n.docId}">حذف</button></div></div>`).join("");
+        
+    } catch(e) {
+        console.error(e);
+        list.textContent = "تعذر تحميل الأحداث من Firebase.";
+        status("تعذر تحميل الأحداث. تأكد من تسجيل الدخول.", "bad");
+    }
+}
+
+// نظام التحقق من الصلاحيات قبل تحميل البيانات
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadEvents();
+        $("publishBtn").addEventListener("click", addEvent);
+        $("refreshBtn").addEventListener("click", loadEvents);
+    } else {
+        status("غير مصرح لك بالدخول. يرجى تسجيل الدخول كمدير النظام.", "bad");
+    }
+});
