@@ -1,65 +1,72 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FA Admin | إدارة المنصة</title>
-<style>
-:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--line:#e2e8f0}
-body{font-family:sans-serif;background:#f8f9fc;margin:0;padding:20px;color:var(--ink)}
-.card{background:white;padding:25px;border-radius:24px;border:1px solid var(--line);box-shadow:0 10px 25px rgba(0,0,0,0.05);max-width:800px;margin:20px auto}
-h1,h2{color:var(--blue)}
-input,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
-button{background:var(--gold);color:#000;border:none;padding:12px 24px;border-radius:12px;font-weight:bold;cursor:pointer;margin-top:10px}
-.news-item{border-bottom:1px solid var(--line);padding:15px 0;display:flex;justify-content:space-between;align-items:center}
-</style>
+    <meta charset="utf-8">
+    <title>FA Media Solutions | لوحة تحكم الإدارة</title>
+    <style>
+        :root { --navy: #06152b; --blue: #0a2f5e; --gold: #d4af7a; --ink: #0f172a; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--ink); margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h1 { color: var(--navy); text-align: center; font-size: 24px; margin-bottom: 25px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+        label { font-weight: bold; color: var(--blue); display: block; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
+        button { background: var(--navy); color: var(--gold); border: none; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: 0.3s; }
+        button:hover { background: var(--blue); }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        .delete-btn { background: #dc2626 !important; color: white !important; padding: 5px 15px !important; width: auto !important; margin-top: 0 !important; }
+    </style>
 </head>
 <body>
-<div class="card">
-    <h1>لوحة تحكم FA Media</h1>
-    <input id="title" placeholder="عنوان الحدث">
-    <input id="summary" placeholder="ملخص الحدث">
-    <textarea id="content" placeholder="نص الحدث الكامل" rows="4"></textarea>
-    <button id="publishBtn">نشر الحدث في المحرك</button>
-</div>
-<div class="card">
-    <h2>الأحداث المسجلة</h2>
-    <div id="list">جاري التحميل...</div>
+<div class="container">
+    <div class="card">
+        <h1>FA Media - لوحة التحكم</h1>
+        <label>عنوان الخبر</label>
+        <input id="title" placeholder="أدخل العنوان...">
+        <label>الملخص</label>
+        <input id="summary" placeholder="أدخل ملخص الخبر...">
+        <label>النص الكامل</label>
+        <textarea id="content" placeholder="نص الخبر..." rows="5"></textarea>
+        <button id="publishBtn">نشر الخبر في الموقع</button>
+    </div>
+    
+    <div class="card">
+        <h2 style="text-align:center; color:var(--navy);">الأخبار المنشورة</h2>
+        <div id="list">جاري تحميل الأخبار...</div>
+    </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-const firebaseConfig = {
+const db = getFirestore(initializeApp({
     apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
-    authDomain: "fa-media-portal.firebaseapp.com",
-    projectId: "fa-media-portal",
-    storageBucket: "fa-media-portal.firebasestorage.app",
-    messagingSenderId: "817175807213",
-    appId: "1:817175807213:web:eda206611dd78ce89038e4"
-};
+    projectId: "fa-media-portal"
+}));
 
-const db = getFirestore(initializeApp(firebaseConfig));
 const $ = id => document.getElementById(id);
 
-async function loadEvents() {
-    const snap = await getDocs(collection(db, "events"));
-    $("list").innerHTML = snap.docs.map(d => `<div class="news-item"><span>${d.data().title}</span> <button onclick="deleteDoc(doc(db,'events','${d.id}')); location.reload();">حذف</button></div>`).join("");
+async function load() {
+    const snap = await getDocs(collection(db, "news"));
+    $("list").innerHTML = snap.docs.map(d => `
+        <div class="item">
+            <span>${d.data().title}</span>
+            <button class="delete-btn" onclick="deleteDoc(doc(db,'news','${d.id}')); location.reload();">حذف</button>
+        </div>`).join("");
 }
 
 $("publishBtn").addEventListener("click", async () => {
-    await addDoc(collection(db, "events"), {
-        title: $("title").value,
-        summary: $("summary").value,
-        content: $("content").value,
-        date: new Date().toISOString().slice(0,10)
+    if(!$("title").value) return alert("الرجاء كتابة العنوان");
+    await addDoc(collection(db, "news"), { 
+        title: $("title").value, 
+        summary: $("summary").value, 
+        content: $("content").value 
     });
-    alert("تم النشر!");
     location.reload();
 });
 
-loadEvents();
+load();
 </script>
 </body>
 </html>
