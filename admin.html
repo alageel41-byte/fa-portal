@@ -2,27 +2,29 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>FA Admin | لوحة التحكم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FA Admin | إدارة المنصة</title>
 <style>
-body{font-family:Tahoma,sans-serif;background:#f8f9fc;padding:20px;}
-.card{background:white;padding:20px;border-radius:10px;margin-bottom:20px;border:1px solid #ccc;}
-input,textarea{width:100%;padding:10px;margin:5px 0;border:1px solid #ddd;border-radius:5px;}
-button{background:#d4af7a;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;}
+:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--line:#e2e8f0}
+body{font-family:sans-serif;background:#f8f9fc;margin:0;padding:20px;color:var(--ink)}
+.card{background:white;padding:25px;border-radius:24px;border:1px solid var(--line);box-shadow:0 10px 25px rgba(0,0,0,0.05);max-width:800px;margin:20px auto}
+h1,h2{color:var(--blue)}
+input,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid var(--line);border-radius:12px;box-sizing:border-box}
+button{background:var(--gold);color:#000;border:none;padding:12px 24px;border-radius:12px;font-weight:bold;cursor:pointer;margin-top:10px}
+.news-item{border-bottom:1px solid var(--line);padding:15px 0;display:flex;justify-content:space-between;align-items:center}
 </style>
 </head>
 <body>
-<div style="max-width:800px;margin:auto;">
-    <div class="card">
-        <h1>إضافة حدث جديد</h1>
-        <input id="title" placeholder="العنوان">
-        <input id="summary" placeholder="الملخص">
-        <textarea id="content" placeholder="النص"></textarea>
-        <button id="publishBtn">نشر الحدث</button>
-    </div>
-    <div class="card">
-        <h2>الأحداث المسجلة</h2>
-        <div id="list">جاري التحميل...</div>
-    </div>
+<div class="card">
+    <h1>لوحة تحكم FA Media</h1>
+    <input id="title" placeholder="عنوان الحدث">
+    <input id="summary" placeholder="ملخص الحدث">
+    <textarea id="content" placeholder="نص الحدث الكامل" rows="4"></textarea>
+    <button id="publishBtn">نشر الحدث في المحرك</button>
+</div>
+<div class="card">
+    <h2>الأحداث المسجلة</h2>
+    <div id="list">جاري التحميل...</div>
 </div>
 
 <script type="module">
@@ -42,10 +44,8 @@ const db = getFirestore(initializeApp(firebaseConfig));
 const $ = id => document.getElementById(id);
 
 async function loadEvents() {
-    try {
-        const snap = await getDocs(collection(db, "events"));
-        $("list").innerHTML = snap.docs.map(d => `<div style="padding:10px; border-bottom:1px solid #eee;">${d.data().title} <button onclick="deleteDoc(doc(db,'events','${d.id}')); location.reload();">حذف</button></div>`).join("");
-    } catch(e) { $("list").innerHTML = "خطأ في الاتصال!"; }
+    const snap = await getDocs(collection(db, "events"));
+    $("list").innerHTML = snap.docs.map(d => `<div class="news-item"><span>${d.data().title}</span> <button onclick="deleteDoc(doc(db,'events','${d.id}')); location.reload();">حذف</button></div>`).join("");
 }
 
 $("publishBtn").addEventListener("click", async () => {
@@ -55,6 +55,7 @@ $("publishBtn").addEventListener("click", async () => {
         content: $("content").value,
         date: new Date().toISOString().slice(0,10)
     });
+    alert("تم النشر!");
     location.reload();
 });
 
