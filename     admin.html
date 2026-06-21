@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FA Admin | إدارة الأخبار</title>
+<style>
+:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--ok:#15803d;--bad:#b91c1c;--soft:#f8fafc}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#fff,#f8f9fc);color:var(--ink);line-height:1.7}
+.container{width:min(960px,92vw);margin:auto}.top{background:var(--navy);color:#dbeafe;padding:12px 0;font-size:13px}.header{padding:28px 0}.header h1{margin:0;color:var(--blue);font-size:34px}.header p{margin:6px 0 0;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;margin:16px 0;box-shadow:0 18px 50px rgba(15,23,42,.07)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:850;margin:0 0 6px;color:#334155}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:#fff}textarea{min-height:160px}.hint{font-size:12px;color:var(--muted);margin-top:4px}.small{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:14px;padding:12px 16px;font-weight:950;cursor:pointer}.primary{background:var(--gold);color:#111827}.blue{background:var(--blue);color:white}.ghost{background:#eef2f7;color:#334155}.danger{background:#fee2e2;color:#991b1b}
+.news-item{border-bottom:1px solid var(--line);padding:14px 0}.news-item b{display:block}.news-item span{display:block;color:var(--muted);font-size:13px}.status{border-radius:14px;padding:12px 14px;margin-top:12px;background:#eef2f7;color:#334155}.status.ok{background:#dcfce7;color:var(--ok)}.status.bad{background:#fee2e2;color:var(--bad)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.pill{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:12px;color:#334155}.pill.hot{background:#fee2e2;color:#991b1b}.pill.pin{background:#fef3c7;color:#92400e}
+pre{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border-radius:18px;padding:16px;direction:ltr;text-align:left;max-height:320px;overflow:auto}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.header h1{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="top"><div class="container">FA Portal v4.2 — Firestore + Storage</div></div>
+<header class="container header"><h1>FA Admin</h1><p>إدارة الأخبار والنشر المباشر إلى Firebase</p></header>
+<main class="container">
+<section class="card"><h2>إضافة خبر</h2><div class="grid">
+<div><label>العنوان</label><input id="title" placeholder="عنوان الخبر"></div>
+<div><label>التصنيف</label><select id="category"><option>السعودية</option><option>العالم</option><option>الاقتصاد</option><option>FA SPORTS</option><option>رياضة</option><option>التعليم</option><option>الصحة</option><option>الطقس</option><option>التقنية</option></select></div>
+<div class="full"><label>الملخص</label><input id="summary" placeholder="ملخص قصير يظهر في الصفحة"></div>
+<div class="full"><label>نص الخبر</label><textarea id="content" placeholder="نص الخبر الكامل"></textarea></div>
+<div><label>المصدر</label><input id="source" value="FA Media Solutions"></div>
+<div><label>رابط المصدر</label><input id="sourceUrl" placeholder="اختياري"></div>
+<div><label>رابط الصورة</label><input id="image" placeholder="اختياري إذا لم ترفع صورة"></div>
+<div><label>رفع صورة</label><input id="imageFile" type="file" accept="image/*"><div class="hint">يفضل JPG/PNG أقل من 3MB.</div></div>
+<div><label>رابط الفيديو</label><input id="video" placeholder="YouTube أو رابط فيديو مباشر - اختياري"></div>
+<div><label>رفع فيديو</label><input id="videoFile" type="file" accept="video/*"><div class="hint">اختياري. يفضل ملفات قصيرة.</div></div>
+<div><label>مميز؟</label><select id="featured"><option value="false">لا</option><option value="true">نعم</option></select></div>
+<div><label>مثبت؟</label><select id="pinned"><option value="false">لا</option><option value="true">نعم</option></select></div>
+<div><label>عاجل؟</label><select id="breaking"><option value="false">لا</option><option value="true">نعم</option></select></div>
+<div><label>الحالة</label><select id="status"><option value="published">منشور</option><option value="draft">مسودة</option></select></div>
+</div><div class="actions"><button class="primary" id="publishBtn">نشر في Firebase</button><button class="blue" id="refreshBtn">تحديث القائمة</button><button class="ghost" id="clearFormBtn">تفريغ النموذج</button></div><div id="statusBox" class="status">جاهز للنشر.</div></section>
+<section class="card"><h2>الأخبار الحالية في Firebase</h2><div id="list">جاري التحميل...</div></section>
+<section class="card"><h2>معاينة آخر البيانات</h2><pre id="jsonPreview">[]</pre></section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+const firebaseConfig = {apiKey:"AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",authDomain:"fa-media-portal.firebaseapp.com",projectId:"fa-media-portal",storageBucket:"fa-media-portal.firebasestorage.app",messagingSenderId:"817175807213",appId:"1:817175807213:web:eda206611dd78ce89038e4"};
+const app = initializeApp(firebaseConfig); const db = getFirestore(app); const storage = getStorage(app); const $ = id => document.getElementById(id);
+function today(){return new Date().toISOString().slice(0,10)}
+function nowISO(){return new Date().toISOString()}
+function status(message,type=""){const box=$("statusBox");box.textContent=message;box.className="status "+type}
+function bool(id){return $(id).value === "true"}
+function clearForm(){["title","summary","content","image","video","sourceUrl"].forEach(id=>$(id).value="");$("imageFile").value="";$("videoFile").value="";$("source").value="FA Media Solutions";["featured","pinned","breaking"].forEach(id=>$(id).value="false");$("status").value="published"}
+function escapeHTML(v){return String(v || "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch] || ch));}
+function slugify(text){const cleaned=String(text||"").trim().toLowerCase().replace(/[\u064B-\u065F\u0670]/g,"").replace(/[^\u0600-\u06FFa-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,70);return cleaned || "fa-news"}
+function categorySlug(cat){const map={"السعودية":"saudi","العالم":"world","الاقتصاد":"economy","FA SPORTS":"fa-sports","رياضة":"sports","التعليم":"education","الصحة":"health","الطقس":"weather","التقنية":"tech"};return map[cat] || slugify(cat)}
+async function uploadFile(file, folder){if(!file)return "";const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"-");const path=`${folder}/${Date.now()}-${safeName}`;const fileRef=ref(storage,path);await uploadBytes(fileRef,file);return await getDownloadURL(fileRef)}
+async function itemFromForm(){
+  const imageFile=$("imageFile").files[0]; const videoFile=$("videoFile").files[0];
+  let imageUrl=$("image").value.trim(); let videoUrl=$("video").value.trim();
+  if(imageFile){status("جاري رفع الصورة...");imageUrl=await uploadFile(imageFile,"news-images")}
+  if(videoFile){status("جاري رفع الفيديو...");videoUrl=await uploadFile(videoFile,"news-videos")}
+  const title=$("title").value.trim(); const cat=$("category").value; const slugBase=slugify(title);
+  return {title,category:cat,categorySlug:categorySlug(cat),summary:$("summary").value.trim(),content:$("content").value.trim(),body:$("content").value.trim(),date:today(),author:"Fahad ALageel",source:$("source").value.trim()||"FA Media Solutions",sourceUrl:$("sourceUrl").value.trim(),status:$("status").value,published:$("status").value==="published",featured:bool("featured"),pinned:bool("pinned"),breaking:bool("breaking"),image:imageUrl,imageUrl,video:videoUrl,videoUrl,slug:`${slugBase}-${Date.now().toString().slice(-6)}`,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),publishedAt:nowISO(),sortAt:Date.now()}
+}
+async function addNews(){const title=$("title").value.trim(), summary=$("summary").value.trim(), content=$("content").value.trim();if(!title||!summary||!content){status("أكمل العنوان والملخص ونص الخبر.","bad");return}$("publishBtn").disabled=true;status("جاري تجهيز الخبر...");try{const item=await itemFromForm();status("جاري النشر في Firebase...");await addDoc(collection(db,"news"),item);status("تم نشر الخبر بنجاح. افتح الصفحة الرئيسية وحدثها.","ok");clearForm();await loadNews()}catch(e){console.error(e);status("فشل النشر. راجع Firestore/Storage Rules أو الاتصال.","bad")}finally{$("publishBtn").disabled=false}}
+async function removeNews(id){if(!confirm("حذف هذا الخبر من Firebase؟"))return;try{await deleteDoc(doc(db,"news",id));status("تم حذف الخبر.","ok");await loadNews()}catch(e){console.error(e);status("فشل الحذف.","bad")}}
+async function loadNews(){const list=$("list");list.textContent="جاري التحميل...";try{const snap=await getDocs(collection(db,"news"));const news=snap.docs.map(d=>({docId:d.id,...d.data()}));news.sort((a,b)=>(b.sortAt||0)-(a.sortAt||0) || String(b.date||"").localeCompare(String(a.date||"")));$("jsonPreview").textContent=JSON.stringify(news,null,2);if(!news.length){list.textContent="لا توجد أخبار بعد.";return}list.innerHTML=news.map(n=>`<div class="news-item"><b>${escapeHTML(n.title)}</b><span>${escapeHTML(n.category)} — ${escapeHTML(n.date)} — ${escapeHTML(n.status||"")}</span><div class="badges">${n.breaking?'<em class="pill hot">عاجل</em>':''}${n.pinned?'<em class="pill pin">مثبت</em>':''}${n.featured?'<em class="pill">مميز</em>':''}${n.image?'<em class="pill">صورة</em>':''}${n.video?'<em class="pill">فيديو</em>':''}</div><div class="actions"><button class="danger" data-delete="${n.docId}">حذف</button></div></div>`).join("");list.querySelectorAll("[data-delete]").forEach(btn=>btn.addEventListener("click",()=>removeNews(btn.dataset.delete)))}catch(e){console.error(e);list.textContent="تعذر تحميل الأخبار من Firebase.";status("تعذر تحميل الأخبار. راجع الصلاحيات.","bad")}}
+$("publishBtn").addEventListener("click",addNews);$("refreshBtn").addEventListener("click",loadNews);$("clearFormBtn").addEventListener("click",clearForm);loadNews();
+</script>
+</body>
+</html>
