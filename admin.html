@@ -5,54 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FA Admin | إدارة الأخبار</title>
 <style>
-    :root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--ok:#15803d;--bad:#b91c1c}
-    body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#fff,#f8f9fc);color:var(--ink);line-height:1.7}
-    .container{width:min(900px,92vw);margin:auto}
-    .header{padding:28px 0;text-align:center}
-    .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;margin:16px 0;box-shadow:0 10px 30px rgba(0,0,0,0.05)}
-    input,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid var(--line);border-radius:12px}
-    button{background:var(--navy);color:var(--gold);border:none;padding:12px 24px;border-radius:12px;cursor:pointer;font-weight:bold;width:100%}
-    .news-item{display:flex;justify-content:space-between;padding:15px;border-bottom:1px solid var(--line);align-items:center}
+:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--ok:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#fff,#f8f9fc);color:var(--ink);line-height:1.7}
+.container{width:min(900px,92vw);margin:auto}
+.top{background:var(--navy);color:#dbeafe;padding:12px 0;font-size:13px}.header{padding:28px 0}.header h1{margin:0;color:var(--blue);font-size:34px}.header p{margin:6px 0 0;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;margin:16px 0;box-shadow:0 18px 50px rgba(15,23,42,.07)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:850;margin:0 0 6px;color:#334155}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit}textarea{min-height:150px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{border:0;border-radius:14px;padding:12px 16px;font-weight:950;cursor:pointer}.primary{background:var(--gold);color:#111827}.blue{background:var(--blue);color:white}.ghost{background:#eef2f7;color:#334155}.danger{background:#fee2e2;color:#991b1b}
+.news-item{border-bottom:1px solid var(--line);padding:12px 0}.news-item b{display:block}.status{border-radius:14px;padding:12px 14px;margin-top:12px;background:#eef2f7;color:#334155}.status.ok{background:#dcfce7;color:var(--ok)}.status.bad{background:#fee2e2;color:var(--bad)}
+pre{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;border-radius:18px;padding:16px;direction:ltr;text-align:left;max-height:320px;overflow:auto}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.header h1{font-size:26px}}
 </style>
 </head>
 <body>
-<div class="container">
-    <div class="header"><h1>FA Media Solutions</h1><p>لوحة التحكم الأصلية</p></div>
-    <div class="card">
-        <input id="title" placeholder="عنوان الخبر">
-        <input id="image" placeholder="رابط الصورة">
-        <textarea id="summary" placeholder="المحتوى" rows="3"></textarea>
-        <button id="publishBtn">نشر الخبر</button>
-    </div>
-    <div class="card" id="list">جاري تحميل الأخبار...</div>
-</div>
-
+<div class="top"><div class="container">FA Portal v4.1 — Firebase Firestore</div></div>
+<header class="container header"><h1>FA Admin</h1><p>إدارة الأخبار والنشر المباشر إلى Firebase Firestore</p></header>
+<main class="container">
+<section class="card"><h2>إضافة خبر</h2><div class="grid">
+<div><label>العنوان</label><input id="title" placeholder="عنوان الخبر"></div>
+<div><label>التصنيف</label><select id="category"><option>السعودية</option><option>العالم</option><option>الاقتصاد</option><option>FA SPORTS</option><option>رياضة</option><option>التعليم</option><option>الصحة</option><option>الطقس</option><option>التقنية</option></select></div>
+<div class="full"><label>الملخص</label><input id="summary" placeholder="ملخص قصير يظهر في الصفحة"></div>
+<div class="full"><label>نص الخبر</label><textarea id="content" placeholder="نص الخبر الكامل"></textarea></div>
+<div><label>المصدر</label><input id="source" value="FA Media Solutions"></div><div><label>الصورة اختياري</label><input id="image" placeholder="رابط الصورة"></div>
+<div><label>مميز؟</label><select id="featured"><option value="false">لا</option><option value="true">نعم</option></select></div>
+<div><label>الحالة</label><select id="status"><option value="published">منشور</option><option value="draft">مسودة</option></select></div>
+</div><div class="actions"><button class="primary" id="publishBtn">نشر في Firebase</button><button class="blue" id="refreshBtn">تحديث القائمة</button><button class="ghost" id="clearFormBtn">تفريغ النموذج</button></div><div id="statusBox" class="status">جاهز للنشر.</div></section>
+<section class="card"><h2>الأخبار الحالية في Firebase</h2><div id="list">جاري التحميل...</div></section>
+<section class="card"><h2>معاينة آخر البيانات</h2><pre id="jsonPreview">[]</pre></section>
+</main>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    
+    const db = getFirestore(initializeApp({ 
+        apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU", 
+        projectId: "fa-media-portal" 
+    }));
 
-    const db = getFirestore(initializeApp({ apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU", projectId: "fa-media-portal" }));
-
-    async function load() {
-        const q = query(collection(db, "news"), orderBy("date", "desc"));
-        const snap = await getDocs(q);
-        document.getElementById("list").innerHTML = snap.docs.map(d => `
-            <div class="news-item">
-                <b>${d.data().title || 'بدون عنوان'}</b>
-                <button style="width:auto; background:red; color:white" onclick="deleteDoc(doc(db,'news','${d.id}')); location.reload();">حذف</button>
-            </div>`).join("");
+    const $ = id => document.getElementById(id);
+    
+    function escapeHTML(v) {
+        return String(v || "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch] || ch));
     }
 
     document.getElementById("publishBtn").onclick = async () => {
-        await addDoc(collection(db, "news"), {
-            title: document.getElementById("title").value,
-            image: document.getElementById("image").value,
-            summary: document.getElementById("summary").value,
-            date: new Date().toISOString()
-        });
+        const item = {
+            title: $("title").value.trim(),
+            category: $("category").value,
+            summary: $("summary").value.trim(),
+            content: $("content").value.trim(),
+            source: $("source").value.trim() || "FA Media Solutions",
+            image: $("image").value.trim(),
+            createdAt: new Date().toISOString()
+        };
+        
+        if(!item.title || !item.summary) {
+            alert("الرجاء إكمال العنوان والملخص");
+            return;
+        }
+
+        await addDoc(collection(db, "news"), item);
+        alert("تم تحديث المنظومة بنجاح");
         location.reload();
     };
-    load();
+
+    async function loadNews(){
+        const list = $("list");
+        list.textContent = "جاري التحميل...";
+        try{
+            const snap = await getDocs(collection(db,"news"));
+            const news = snap.docs.map(d => ({docId: d.id, ...d.data()}));
+            news.sort((a,b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+            $("jsonPreview").textContent = JSON.stringify(news, null, 2);
+            
+            if(!news.length){
+                list.textContent = "لا توجد أخبار بعد.";
+                return;
+            }
+            list.innerHTML = news.map(n => `<div class="news-item"><b>${escapeHTML(n.title)}</b><span>${escapeHTML(n.category)}</span></div>`).join("");
+        } catch(e) {
+            console.error(e);
+            list.textContent = "تعذر تحميل الأخبار.";
+        }
+    }
+    
+    $("refreshBtn").addEventListener("click", loadNews);
+    loadNews();
 </script>
 </body>
 </html>
