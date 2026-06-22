@@ -4,47 +4,223 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FA Media Solutions | إعلام رقمي احترافي</title>
+
 <style>
-/* تأكد أن هذا الجزء في ملفك يحتوي على جميع كود الـ CSS والـ Base64 الخاص بالشعار */
-:root{ --blue:#133f7a; --navy:#06152b; --gold:#c9a24a; }
-body { margin:0; font-family:sans-serif; }
+:root{
+  --blue:#133f7a;
+  --navy:#06152b;
+  --gold:#c9a24a;
+  --soft:#f6f8fb;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Tahoma,sans-serif;
+  background:linear-gradient(180deg,#06152b 0%,#0b2445 42%,#f6f8fb 42%);
+  color:#111;
+}
+header{
+  padding:34px 18px;
+  text-align:center;
+  color:white;
+}
+.logo{
+  width:82px;height:82px;margin:0 auto 14px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:26px;color:var(--gold);
+}
+h1{margin:0;font-size:28px}
+.tagline{margin:10px 0 0;color:#d9e2f2;font-size:15px}
+.wrap{max-width:1050px;margin:auto;padding:16px}
+.panel{
+  background:white;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 16px 45px rgba(0,0,0,.18);
+}
+.controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+input{
+  flex:1;
+  padding:14px 16px;
+  border:1px solid #d9dee8;
+  border-radius:14px;
+  font-size:15px;
+}
+button{
+  border:0;
+  background:var(--blue);
+  color:white;
+  padding:0 18px;
+  border-radius:14px;
+  font-weight:700;
+}
+#fa-json-news-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.fa-json-news-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-right:5px solid var(--gold);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 8px 24px rgba(0,0,0,.07);
+}
+.fa-json-news-card h2{
+  margin:0 0 10px;
+  color:var(--blue);
+  font-size:20px;
+  line-height:1.5;
+}
+.badge{
+  display:inline-block;
+  background:#f7efd9;
+  color:#7a5a12;
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.fa-json-news-card p{
+  color:#333;
+  line-height:1.9;
+  margin:8px 0 12px;
+}
+.meta{
+  color:#777;
+  font-size:13px;
+  border-top:1px solid #eee;
+  padding-top:10px;
+}
+.status{
+  text-align:center;
+  padding:24px;
+  color:#666;
+}
+footer{
+  text-align:center;
+  color:#777;
+  padding:24px;
+  font-size:13px;
+}
+@media(max-width:600px){
+  h1{font-size:23px}
+  .controls{flex-direction:column}
+  button{padding:13px}
+}
 </style>
 </head>
+
 <body>
 
-<div id="fa-json-news-grid"></div>
+<header>
+  <div class="logo">FA</div>
+  <h1>FA Media Solutions</h1>
+  <div class="tagline">موجز بصري وتحليلي مبني على مصادر معلنة</div>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="controls">
+      <input id="fa-search-input" type="search" placeholder="ابحث في الأخبار..." oninput="performSearch()">
+      <button onclick="performSearch()">بحث</button>
+    </div>
+
+    <div id="fa-json-news-grid">
+      <div class="status">جاري تحميل الأخبار...</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  fahadalageel.com — FA Media Solutions
+</footer>
 
 <script type="module">
-// هذا التعديل يضمن أن المتصفح ينهي كل التصميم أولاً ثم يشغل السكربت
-window.addEventListener('load', async () => {
-    try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
-        const { getFirestore, collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
-
-        const db = getFirestore(initializeApp({
-            apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
-            projectId: "fa-media-portal"
-        }));
-
-        const snap = await getDocs(query(collection(db, "news"), orderBy("createdAt", "desc")));
-        
-        // هنا الدالة التي تعرض الأخبار بتصميمك
-        if(typeof window.renderNews === 'function') {
-            window.renderNews(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }
-    } catch(e) {
-        console.error("المحرك اشتغل لكن التصميم لا يتأثر:", e);
-    }
-});
-
-// دوال البحث (لا تلمسها)
-window.performSearch = function() {
-    const query = document.getElementById('fa-search-input')?.value.toLowerCase().trim();
-    const cards = document.querySelectorAll('.fa-json-news-card');
-    cards.forEach(card => {
-        card.style.display = (query === '' || card.textContent.toLowerCase().includes(query)) ? '' : 'none';
-    });
+const firebaseConfig = {
+  apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
+  projectId: "fa-media-portal"
 };
+
+function safeText(value, fallback="") {
+  return value === undefined || value === null || value === "" ? fallback : String(value);
+}
+
+window.renderNews = function(newsData) {
+  const grid = document.getElementById("fa-json-news-grid");
+  if (!grid) return;
+
+  const published = (newsData || []).filter(item => {
+    const status = safeText(item.status, "published").toLowerCase();
+    return status !== "draft" && status !== "مسودة";
+  });
+
+  if (published.length === 0) {
+    grid.innerHTML = '<div class="status">لا توجد أخبار منشورة حالياً.</div>';
+    return;
+  }
+
+  grid.innerHTML = published.map(item => `
+    <article class="fa-json-news-card">
+      <span class="badge">${safeText(item.category, "FA Media")}</span>
+      <h2>${safeText(item.title, "بدون عنوان")}</h2>
+      <p>${safeText(item.summary || item.content, "لا يوجد نص للخبر.")}</p>
+      <div class="meta">
+        ${safeText(item.source, "FA Media Solutions")}
+      </div>
+    </article>
+  `).join("");
+};
+
+window.performSearch = function() {
+  const query = document.getElementById("fa-search-input")?.value.toLowerCase().trim() || "";
+  document.querySelectorAll(".fa-json-news-card").forEach(card => {
+    card.style.display = query === "" || card.textContent.toLowerCase().includes(query) ? "" : "none";
+  });
+};
+
+window.addEventListener("load", async () => {
+  const grid = document.getElementById("fa-json-news-grid");
+
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const { getFirestore, collection, getDocs, query, orderBy } =
+      await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let snap;
+
+    try {
+      snap = await getDocs(query(collection(db, "news"), orderBy("createdAt", "desc")));
+    } catch (indexError) {
+      console.warn("Fallback without orderBy:", indexError);
+      snap = await getDocs(collection(db, "news"));
+    }
+
+    const newsData = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    window.renderNews(newsData);
+
+  } catch (err) {
+    console.error("News Engine Error:", err);
+    if (grid) {
+      grid.innerHTML = '<div class="status">تعذر تحميل الأخبار حالياً. تحقق من إعدادات Firebase.</div>';
+    }
+  }
+});
 </script>
 
 </body>
