@@ -1,34 +1,51 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>FA Media Solutions | إعلام رقمي احترافي</title>
-    </head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FA Media Solutions | إعلام رقمي احترافي</title>
+<style>
+/* تأكد أن هذا الجزء في ملفك يحتوي على جميع كود الـ CSS والـ Base64 الخاص بالشعار */
+:root{ --blue:#133f7a; --navy:#06152b; --gold:#c9a24a; }
+body { margin:0; font-family:sans-serif; }
+</style>
+</head>
 <body>
-    <div id="fa-json-news-grid"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+<div id="fa-json-news-grid"></div>
+
+<script type="module">
+// هذا التعديل يضمن أن المتصفح ينهي كل التصميم أولاً ثم يشغل السكربت
+window.addEventListener('load', async () => {
+    try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+        const { getFirestore, collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
 
         const db = getFirestore(initializeApp({
             apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
             projectId: "fa-media-portal"
         }));
 
-        async function init() {
-            const grid = document.getElementById("fa-json-news-grid");
-            if (!grid) return;
-            try {
-                const snap = await getDocs(query(collection(db, "news"), orderBy("createdAt", "desc")));
-                grid.innerHTML = snap.docs.map(doc => {
-                    const n = doc.data();
-                    return `<article class="fa-json-news-card"><h3>${n.title || ''}</h3><p>${n.summary || ''}</p></article>`;
-                }).join("");
-            } catch(e) { console.error("Database connection error"); }
+        const snap = await getDocs(query(collection(db, "news"), orderBy("createdAt", "desc")));
+        
+        // هنا الدالة التي تعرض الأخبار بتصميمك
+        if(typeof window.renderNews === 'function') {
+            window.renderNews(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         }
-        window.onload = init;
-    </script>
+    } catch(e) {
+        console.error("المحرك اشتغل لكن التصميم لا يتأثر:", e);
+    }
+});
+
+// دوال البحث (لا تلمسها)
+window.performSearch = function() {
+    const query = document.getElementById('fa-search-input')?.value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.fa-json-news-card');
+    cards.forEach(card => {
+        card.style.display = (query === '' || card.textContent.toLowerCase().includes(query)) ? '' : 'none';
+    });
+};
+</script>
+
 </body>
 </html>
