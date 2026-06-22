@@ -2,66 +2,40 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FA Admin | إدارة الأخبار</title>
 <style>
-:root{--navy:#06152b;--blue:#0a2f5e;--gold:#d4af7a;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0}
-body{margin:0;font-family:Tahoma,sans-serif;background:#f8f9fc;color:var(--ink);padding:20px}
-.container{max-width:800px;margin:auto}
-.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:25px;margin-bottom:20px;box-shadow:0 4px 6px rgba(0,0,0,0.05)}
-h1{color:var(--navy);text-align:center}
-input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid var(--line);border-radius:10px;box-sizing:border-box}
-button{background:var(--navy);color:var(--gold);border:none;padding:12px 20px;border-radius:10px;cursor:pointer;width:100%;font-weight:bold}
-.news-item{display:flex;justify-content:space-between;padding:15px;border-bottom:1px solid var(--line);align-items:center}
+:root{--navy:#06152b;--gold:#d4af7a;}
+body{font-family:Tahoma; background:#f8f9fc; padding:20px; color:var(--navy);}
+.card{background:white; padding:20px; border-radius:15px; box-shadow:0 2px 5px rgba(0,0,0,0.1); max-width:600px; margin:auto;}
+input, textarea{width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:8px;}
+button{background:var(--navy); color:var(--gold); border:none; padding:10px; width:100%; font-weight:bold; cursor:pointer;}
 </style>
 </head>
 <body>
-<div class="container">
-    <div class="card">
-        <h1>لوحة تحكم FA Media</h1>
-        <input id="title" placeholder="عنوان الخبر">
-        <input id="image" placeholder="رابط الصورة (URL)">
-        <textarea id="summary" placeholder="الملخص" rows="3"></textarea>
-        <button id="publishBtn">نشر الخبر</button>
-    </div>
-    <div class="card">
-        <h3>الأخبار الحالية</h3>
-        <div id="list">جاري التحميل...</div>
-    </div>
+<div class="card">
+    <h2>إضافة خبر جديد</h2>
+    <input id="title" placeholder="العنوان">
+    <input id="location" placeholder="مكان الحدث (الموقع)">
+    <input id="image" placeholder="رابط الصورة">
+    <textarea id="summary" placeholder="المحتوى/الملخص"></textarea>
+    <button id="publishBtn">نشر الخبر</button>
 </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+const db = getFirestore(initializeApp({ apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU", projectId: "fa-media-portal" }));
 
-const db = getFirestore(initializeApp({
-    apiKey: "AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
-    projectId: "fa-media-portal"
-}));
-
-const $ = id => document.getElementById(id);
-
-async function load() {
-    const q = query(collection(db, "news"), orderBy("date", "desc"));
-    const snap = await getDocs(q);
-    $("list").innerHTML = snap.docs.map(d => `
-        <div class="news-item">
-            <b>${d.data().title || 'بدون عنوان'}</b>
-            <button style="background:red; color:white; width:auto" onclick="deleteDoc(doc(db,'news','${d.id}')); location.reload();">حذف</button>
-        </div>`).join("");
-}
-
-$("publishBtn").addEventListener("click", async () => {
+document.getElementById("publishBtn").onclick = async () => {
     await addDoc(collection(db, "news"), {
-        title: $("title").value,
-        image: $("image").value,
-        summary: $("summary").value,
-        date: new Date().toISOString() // تاريخ دقيق للترتيب
+        title: document.getElementById("title").value,
+        location: document.getElementById("location").value, // تم إضافة حقل المكان
+        image: document.getElementById("image").value,
+        summary: document.getElementById("summary").value,
+        date: new Date().toLocaleDateString('ar-SA')
     });
+    alert("تم النشر!");
     location.reload();
-});
-
-load();
+};
 </script>
 </body>
 </html>
