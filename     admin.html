@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FA Admin | إدارة الأخبار</title>
+<style>
+:root{
+  --navy:#06152b;
+  --blue:#0a2f5e;
+  --gold:#d4af7a;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --ok:#15803d;
+  --bad:#b91c1c;
+  --warn:#b45309;
+  --soft:#f8fafc;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#fff,#f8f9fc);color:var(--ink);line-height:1.7}
+.container{width:min(1000px,92vw);margin:auto}
+.top{background:var(--navy);color:#dbeafe;padding:12px 0;font-size:13px}
+.header{padding:26px 0}.header h1{margin:0;color:var(--blue);font-size:34px}.header p{margin:6px 0 0;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;margin:16px 0;box-shadow:0 18px 50px rgba(15,23,42,.07)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}
+label{display:block;font-weight:850;margin:0 0 6px;color:#334155}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:#fff}textarea{min-height:160px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+button{border:0;border-radius:14px;padding:12px 16px;font-weight:950;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}.primary{background:var(--gold);color:#111827}.blue{background:var(--blue);color:white}.ghost{background:#eef2f7;color:#334155}.danger{background:#fee2e2;color:#991b1b}.okbtn{background:#dcfce7;color:#166534}.warnbtn{background:#fef3c7;color:#92400e}
+.status{border-radius:14px;padding:12px 14px;margin-top:12px;background:#eef2f7;color:#334155}.status.ok{background:#dcfce7;color:var(--ok)}.status.bad{background:#fee2e2;color:var(--bad)}.status.warn{background:#fef3c7;color:var(--warn)}
+.help{font-size:12px;color:var(--muted);margin-top:5px}.counter{font-size:12px;color:var(--muted);margin-top:5px}.counter.warn{color:var(--warn);font-weight:800}.counter.bad{color:var(--bad);font-weight:900}
+.system-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.sysbox{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:14px}.sysbox b{display:block;color:var(--blue);font-size:22px}.sysbox span{font-size:12px;color:var(--muted)}
+.preview-img{width:100%;max-height:260px;object-fit:cover;border-radius:18px;border:1px solid var(--line);background:#f1f5f9;display:none}.preview-note{font-size:13px;color:var(--muted);margin-top:8px}
+.toolbar{display:grid;grid-template-columns:1fr 220px auto;gap:10px;align-items:center}.toolbar input,.toolbar select{margin:0}
+.news-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:14px 0}.news-item:last-child{border-bottom:0}.news-title{font-weight:950;color:#0f172a}.news-meta{font-size:12px;color:var(--muted);margin-top:3px}.news-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}.mini{padding:8px 11px;border-radius:12px;font-size:12px}.thumb{width:68px;height:50px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#f1f5f9;margin-left:10px;vertical-align:middle}.empty{padding:16px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);background:#f8fafc}.mode-badge{display:inline-flex;border-radius:999px;padding:5px 10px;background:#eff6ff;color:var(--blue);font-size:12px;font-weight:900;margin-right:8px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}.modal.show{display:flex}.modal-box{background:#fff;border-radius:24px;padding:22px;max-width:680px;width:100%;max-height:84vh;overflow:auto;box-shadow:0 30px 90px rgba(0,0,0,.25)}.modal-box h3{margin-top:0;color:var(--blue)}.modal-meta{font-size:13px;color:var(--muted);margin:8px 0 14px}.modal-content{white-space:pre-wrap;color:#334155}
+@media(max-width:760px){.grid,.system-grid,.toolbar{grid-template-columns:1fr}.header h1{font-size:26px}.news-item{grid-template-columns:1fr}.news-actions{justify-content:stretch}.news-actions button{flex:1}.container{width:min(940px,94vw)}}
+</style>
+</head>
+<body>
+<div class="top"><div class="container">FA Portal — Admin Smart 1 | Admin Tools Only</div></div>
+<header class="container header"><h1>FA Admin</h1><p>لوحة إدارة الأخبار — أدوات الإدارة فقط دون تعديل index.html</p></header>
+<main class="container">
+  <section class="card">
+    <h2>مركز النظام</h2>
+    <div class="system-grid">
+      <div class="sysbox"><b id="sysTotal">0</b><span>إجمالي الأخبار</span></div>
+      <div class="sysbox"><b id="sysPublished">0</b><span>منشورة</span></div>
+      <div class="sysbox"><b id="sysDrafts">0</b><span>مسودات</span></div>
+      <div class="sysbox"><b id="sysStatus">جاهز</b><span>حالة Firestore</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span id="formTitle">إضافة خبر</span><span id="editBadge" class="mode-badge" style="display:none">وضع التعديل</span></h2>
+    <div class="grid">
+      <div><label>العنوان</label><input id="title" maxlength="120" placeholder="عنوان الخبر"><div id="titleCount" class="counter">0 / 120</div></div>
+      <div><label>التصنيف</label><select id="category"><option>السعودية</option><option>العالم</option><option>الاقتصاد</option><option>FA SPORTS</option><option>رياضة</option><option>التعليم</option><option>الصحة</option><option>الطقس</option><option>التقنية</option></select></div>
+      <div class="full"><label>الملخص</label><input id="summary" maxlength="260" placeholder="ملخص قصير يظهر في الصفحة"><div id="summaryCount" class="counter">0 / 260</div></div>
+      <div class="full"><label>نص الخبر</label><textarea id="content" placeholder="نص الخبر الكامل"></textarea><div id="contentCount" class="counter">0 حرف</div></div>
+      <div><label>المصدر</label><input id="source" value="FA Media Solutions"></div>
+      <div><label>الصورة اختياري</label><input id="image" placeholder="رابط الصورة المباشر"><div class="help">هذا خاص بالإدارة فقط. إذا كان الرابط صحيحًا ستظهر المعاينة.</div></div>
+      <div><label>مميز؟</label><select id="featured"><option value="false">لا</option><option value="true">نعم</option></select></div>
+      <div><label>الحالة</label><select id="status"><option value="published">منشور</option><option value="draft">مسودة</option></select></div>
+      <div class="full"><label>معاينة الصورة</label><img id="imagePreview" class="preview-img" alt="معاينة الصورة"><div id="imageNote" class="preview-note">لم يتم إدخال صورة.</div></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="saveBtn">نشر في Firebase</button>
+      <button class="blue" id="previewBtn" type="button">معاينة الخبر</button>
+      <button class="ghost" id="clearFormBtn" type="button">تفريغ النموذج</button>
+      <button class="warnbtn" id="cancelEditBtn" type="button" style="display:none">إلغاء التعديل</button>
+    </div>
+    <div id="statusBox" class="status">جاهز للنشر.</div>
+  </section>
+
+  <section class="card">
+    <h2>الأخبار الحالية في Firebase</h2>
+    <div class="toolbar">
+      <input id="adminSearch" placeholder="ابحث في العنوان أو المحتوى أو القسم أو المصدر">
+      <select id="categoryFilter"><option value="all">كل الأقسام</option><option>السعودية</option><option>العالم</option><option>الاقتصاد</option><option>FA SPORTS</option><option>رياضة</option><option>التعليم</option><option>الصحة</option><option>الطقس</option><option>التقنية</option></select>
+      <button class="blue" id="refreshBtn">تحديث القائمة</button>
+    </div>
+    <div id="list" style="margin-top:14px">جاري التحميل...</div>
+  </section>
+</main>
+
+<div class="modal" id="previewModal" aria-hidden="true">
+  <div class="modal-box">
+    <h3 id="modalTitle">معاينة الخبر</h3>
+    <div id="modalMeta" class="modal-meta"></div>
+    <img id="modalImage" class="preview-img" style="display:none;margin-bottom:14px" alt="صورة الخبر">
+    <div id="modalContent" class="modal-content"></div>
+    <div class="actions"><button class="ghost" id="closeModalBtn">إغلاق</button></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyCybhy84-1-Bkbooqq7lWyszVkOAkkGGAU",
+  authDomain:"fa-media-portal.firebaseapp.com",
+  projectId:"fa-media-portal",
+  storageBucket:"fa-media-portal.firebasestorage.app",
+  messagingSenderId:"817175807213",
+  appId:"1:817175807213:web:eda206611dd78ce89038e4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+let allNews = [];
+let editingId = null;
+
+function escapeHTML(v){return String(v || "").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));}
+function clean(v){return String(v || "").trim();}
+function getDateValue(value){
+  if(!value) return 0;
+  if(value && typeof value.toDate === "function") return value.toDate().getTime();
+  if(value && typeof value.seconds === "number") return value.seconds * 1000;
+  const d = new Date(value); return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+function formatDate(value){
+  const t = getDateValue(value); if(!t) return "بدون تاريخ";
+  try{return new Date(t).toLocaleString("ar-SA",{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});}catch(e){return "";}
+}
+function showStatus(msg,type=""){const box=$("statusBox");box.textContent=msg;box.className="status "+type;}
+function isValidUrl(url){if(!url) return true; try{const u=new URL(url); return ["http:","https:"].includes(u.protocol);}catch(e){return false;}}
+function setLoading(isLoading){$("saveBtn").disabled=isLoading;$("refreshBtn").disabled=isLoading;$("saveBtn").textContent=isLoading ? "جاري الحفظ..." : (editingId ? "حفظ التعديل" : "نشر في Firebase");}
+
+function updateCounters(){
+  const titleLen=$("title").value.length, summaryLen=$("summary").value.length, contentLen=$("content").value.length;
+  $("titleCount").textContent=`${titleLen} / 120`;
+  $("summaryCount").textContent=`${summaryLen} / 260`;
+  $("contentCount").textContent=`${contentLen} حرف`;
+  $("titleCount").className="counter "+(titleLen>100?"warn":"");
+  $("summaryCount").className="counter "+(summaryLen>220?"warn":"");
+  $("contentCount").className="counter "+(contentLen<30&&contentLen>0?"warn":"");
+}
+
+function previewImage(){
+  const url=clean($("image").value); const img=$("imagePreview"); const note=$("imageNote");
+  img.style.display="none"; img.removeAttribute("src");
+  if(!url){note.textContent="لم يتم إدخال صورة."; note.style.color="var(--muted)"; return;}
+  if(!isValidUrl(url)){note.textContent="رابط الصورة غير صالح."; note.style.color="var(--bad)"; return;}
+  img.onload=()=>{img.style.display="block"; note.textContent="تم تحميل معاينة الصورة."; note.style.color="var(--ok)";};
+  img.onerror=()=>{img.style.display="none"; note.textContent="تعذر عرض الصورة. تأكد أن الرابط مباشر ومتاح."; note.style.color="var(--warn)";};
+  img.src=url;
+}
+
+function formData(){
+  return {
+    title:clean($("title").value),
+    category:$("category").value,
+    summary:clean($("summary").value),
+    content:clean($("content").value),
+    source:clean($("source").value)||"FA Media Solutions",
+    image:clean($("image").value),
+    featured:$("featured").value==="true",
+    status:$("status").value,
+    published:$("status").value==="published"
+  };
+}
+
+function validateForm(item){
+  if(!item.title) return "العنوان مطلوب.";
+  if(!item.summary) return "الملخص مطلوب.";
+  if(!item.content || item.content.length < 10) return "نص الخبر قصير جدًا.";
+  if(item.image && !isValidUrl(item.image)) return "رابط الصورة غير صالح.";
+  return "";
+}
+
+function clearForm(){
+  ["title","summary","content","image"].forEach(id=>$(id).value="");
+  $("source").value="FA Media Solutions"; $("featured").value="false"; $("status").value="published"; $("category").value="السعودية";
+  editingId=null; $("formTitle").textContent="إضافة خبر"; $("editBadge").style.display="none"; $("cancelEditBtn").style.display="none"; $("saveBtn").textContent="نشر في Firebase";
+  updateCounters(); previewImage(); showStatus("تم تفريغ النموذج.","ok");
+}
+
+async function saveNews(){
+  const item=formData(); const error=validateForm(item);
+  if(error){showStatus(error,"bad"); return;}
+  setLoading(true); showStatus(editingId ? "جاري حفظ التعديل..." : "جاري النشر في Firebase...");
+  try{
+    if(editingId){
+      await updateDoc(doc(db,"news",editingId), {...item, updatedAt:serverTimestamp()});
+      showStatus("تم تعديل الخبر بنجاح.","ok");
+    }else{
+      await addDoc(collection(db,"news"), {...item, createdAt:serverTimestamp()});
+      showStatus("تم نشر الخبر بنجاح.","ok");
+    }
+    clearForm(); await loadNews();
+  }catch(e){console.error(e);showStatus("فشلت العملية. راجع صلاحيات Firestore أو الاتصال.","bad");}
+  finally{setLoading(false);}
+}
+
+async function deleteNews(id){
+  const item=allNews.find(n=>n.docId===id); const title=item?.title || "هذا الخبر";
+  if(!confirm(`هل تريد حذف الخبر؟\n${title}`)) return;
+  showStatus("جاري حذف الخبر...");
+  try{await deleteDoc(doc(db,"news",id)); showStatus("تم حذف الخبر بنجاح.","ok"); await loadNews();}
+  catch(e){console.error(e);showStatus("فشل حذف الخبر. راجع صلاحيات Firestore.","bad");}
+}
+
+function editNews(id){
+  const n=allNews.find(x=>x.docId===id); if(!n){showStatus("تعذر العثور على الخبر.","bad"); return;}
+  editingId=id; $("title").value=n.title||""; $("category").value=n.category||"السعودية"; $("summary").value=n.summary||""; $("content").value=n.content||""; $("source").value=n.source||"FA Media Solutions"; $("image").value=n.image||""; $("featured").value=String(!!n.featured); $("status").value=n.status||"published";
+  $("formTitle").textContent="تعديل خبر"; $("editBadge").style.display="inline-flex"; $("cancelEditBtn").style.display="inline-flex"; $("saveBtn").textContent="حفظ التعديل";
+  updateCounters(); previewImage(); showStatus("تم تحميل الخبر للتعديل.","warn"); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openPreview(item){
+  const n=item || formData(); $("modalTitle").textContent=n.title||"معاينة الخبر"; $("modalMeta").textContent=`${n.category||"خبر"} — ${n.source||"FA Media Solutions"}`; $("modalContent").textContent=n.content||n.summary||"لا يوجد محتوى.";
+  const img=$("modalImage"); img.style.display="none"; img.removeAttribute("src"); if(n.image && isValidUrl(n.image)){img.src=n.image; img.style.display="block";}
+  $("previewModal").classList.add("show");
+}
+function closePreview(){$("previewModal").classList.remove("show");}
+
+function updateSystem(){
+  const total=allNews.length; const published=allNews.filter(n=>String(n.status||"published").toLowerCase()!=="draft").length;
+  $("sysTotal").textContent=total; $("sysPublished").textContent=published; $("sysDrafts").textContent=total-published; $("sysStatus").textContent="متصل";
+}
+
+function filteredNews(){
+  const q=clean($("adminSearch").value).toLowerCase(); const cat=$("categoryFilter").value;
+  return allNews.filter(n=>{
+    const text=[n.title,n.summary,n.content,n.category,n.source].join(" ").toLowerCase();
+    const matchQ=!q||text.includes(q); const matchCat=cat==="all"||n.category===cat;
+    return matchQ&&matchCat;
+  });
+}
+
+function renderList(){
+  const list=$("list"); const rows=filteredNews();
+  if(!rows.length){list.innerHTML='<div class="empty">لا توجد أخبار مطابقة.</div>';return;}
+  list.innerHTML=rows.map(n=>{
+    const thumb=n.image&&isValidUrl(n.image)?`<img class="thumb" src="${escapeHTML(n.image)}" alt="">`:"";
+    return `<div class="news-item">
+      <div><div class="news-title">${thumb}${escapeHTML(n.title||"بدون عنوان")}</div><div class="news-meta">${escapeHTML(n.category||"")} — ${escapeHTML(n.source||"FA Media Solutions")} — ${escapeHTML(formatDate(n.createdAt||n.date||n.updatedAt))}</div></div>
+      <div class="news-actions"><button class="mini blue" data-preview="${n.docId}">👁 معاينة</button><button class="mini ghost" data-edit="${n.docId}">✏️ تعديل</button><button class="mini danger" data-delete="${n.docId}">🗑 حذف</button></div>
+    </div>`;
+  }).join("");
+}
+
+async function loadNews(){
+  $("list").textContent="جاري التحميل..."; $("sysStatus").textContent="تحميل";
+  try{
+    const snap=await getDocs(collection(db,"news"));
+    allNews=snap.docs.map(d=>({docId:d.id,...d.data()})).sort((a,b)=>getDateValue(b.createdAt||b.date||b.updatedAt)-getDateValue(a.createdAt||a.date||a.updatedAt));
+    updateSystem(); renderList(); showStatus("تم تحديث القائمة.","ok");
+  }catch(e){console.error(e);$("list").innerHTML='<div class="empty">تعذر تحميل الأخبار من Firebase.</div>';$("sysStatus").textContent="خطأ";showStatus("تعذر تحميل الأخبار. راجع الاتصال أو الصلاحيات.","bad");}
+}
+
+["title","summary","content"].forEach(id=>$(id).addEventListener("input",updateCounters));
+$("image").addEventListener("input",previewImage);
+$("saveBtn").addEventListener("click",saveNews);
+$("clearFormBtn").addEventListener("click",clearForm);
+$("cancelEditBtn").addEventListener("click",clearForm);
+$("previewBtn").addEventListener("click",()=>openPreview());
+$("refreshBtn").addEventListener("click",loadNews);
+$("adminSearch").addEventListener("input",renderList);
+$("categoryFilter").addEventListener("change",renderList);
+$("closeModalBtn").addEventListener("click",closePreview);
+$("previewModal").addEventListener("click",e=>{if(e.target.id==="previewModal")closePreview();});
+$("list").addEventListener("click",e=>{
+  const del=e.target.closest("[data-delete]"); const edit=e.target.closest("[data-edit]"); const prev=e.target.closest("[data-preview]");
+  if(del) deleteNews(del.dataset.delete);
+  if(edit) editNews(edit.dataset.edit);
+  if(prev){const n=allNews.find(x=>x.docId===prev.dataset.preview); if(n) openPreview(n);}
+});
+
+updateCounters(); previewImage(); loadNews();
+</script>
+</body>
+</html>
