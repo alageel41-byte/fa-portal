@@ -817,6 +817,97 @@ blockquote{
 }
 </style>
 
+
+<style id="fa-fast-news-ticker">
+/* FA Fast News Ticker — visual-only enhancement */
+.ticker{
+  overflow:hidden !important;
+  white-space:nowrap !important;
+}
+.ticker .inner{
+  display:inline-flex !important;
+  width:max-content !important;
+  min-width:max-content !important;
+  animation:faFastTicker 18s linear infinite !important;
+  will-change:transform;
+}
+.ticker .inner span{
+  display:inline-block !important;
+  white-space:nowrap !important;
+  padding-inline-end:70px !important;
+}
+@keyframes faFastTicker{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+@media (max-width:600px){
+  .ticker .inner{animation-duration:14s !important}
+}
+</style>
+
+
+<style id="fa-international-date-style">
+.fa-news-date-intl{
+  direction:ltr !important;
+  unicode-bidi:plaintext;
+  display:inline-block;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+</style>
+
+
+<style id="fa-news-image-sizing">
+/* FA News Cards — controlled image size */
+#fa-json-news-section .fa-json-news-card{
+  overflow:hidden !important;
+}
+#fa-json-news-section .fa-news-media{
+  width:100% !important;
+  height:240px !important;
+  max-height:240px !important;
+  overflow:hidden !important;
+  border-radius:16px !important;
+  background:#eef2f7 !important;
+}
+#fa-json-news-section .fa-news-img{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-height:none !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  transform:none !important;
+}
+#fa-json-news-section .fa-json-news-card:hover .fa-news-img{
+  transform:scale(1.01) !important;
+}
+@media (max-width:600px){
+  #fa-json-news-section .fa-news-media{
+    height:190px !important;
+    max-height:190px !important;
+    border-radius:14px !important;
+  }
+  #fa-json-news-section .fa-json-news-card{
+    padding:14px !important;
+    border-radius:20px !important;
+  }
+  #fa-json-news-section .fa-json-news-card.featured{
+    min-height:0 !important;
+  }
+  #fa-json-news-section .fa-json-news-card.featured h3{
+    font-size:27px !important;
+    line-height:1.4 !important;
+  }
+}
+@media (min-width:601px) and (max-width:1100px){
+  #fa-json-news-section .fa-news-media{
+    height:220px !important;
+    max-height:220px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -1866,6 +1957,68 @@ window.addEventListener("load",function(){setTimeout(setup,700);});
     }
   }
   install(); setTimeout(install,1500);
+})();
+</script>
+
+
+<script id="fa-fast-news-ticker-script">
+(function(){
+  function enhanceTicker(){
+    const inner=document.querySelector(".ticker .inner");
+    if(!inner || inner.dataset.faFastReady==="1") return;
+    const text=inner.textContent.trim();
+    if(!text) return;
+    inner.innerHTML="<span>"+text+"</span><span aria-hidden=\"true\">"+text+"</span>";
+    inner.dataset.faFastReady="1";
+  }
+  window.addEventListener("load", enhanceTicker);
+  const observer=new MutationObserver(enhanceTicker);
+  observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
+})();
+</script>
+
+
+<script id="fa-international-date-script">
+(function(){
+  function faIntlDate(value){
+    if(value === null || value === undefined || value === "") return "";
+    let d;
+    if(typeof value==="number") d=new Date(value);
+    else if(value && typeof value.toDate==="function") d=value.toDate();
+    else d=new Date(value);
+    if(isNaN(d.getTime())) return "";
+    const p=n=>String(n).padStart(2,"0");
+    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+
+  function applyDates(){
+    if(!Array.isArray(window.FA_NEWS_CACHE)) return;
+    document.querySelectorAll(".fa-json-news-card").forEach(card=>{
+      const id=card.dataset.newsId || card.getAttribute("data-news-id") || "";
+      const item=window.FA_NEWS_CACHE.find(n=>String(n.id)===String(id));
+      if(!item) return;
+      const date=faIntlDate(item.createdAt || item.updatedAt || item._time);
+      if(!date) return;
+      let meta=card.querySelector(".fa-news-meta, .fa-news-body .meta");
+      if(!meta){
+        meta=document.createElement("div");
+        meta.className="fa-news-meta";
+        const body=card.querySelector(".fa-news-body");
+        if(body) body.insertBefore(meta, body.firstChild);
+      }
+      if(!meta.querySelector(".fa-news-date-intl")){
+        const el=document.createElement("span");
+        el.className="fa-news-date-intl";
+        el.textContent=date;
+        meta.appendChild(el);
+      }
+    });
+  }
+
+  window.FA_FORMAT_INTL_DATE=faIntlDate;
+  window.addEventListener("load",applyDates);
+  const observer=new MutationObserver(()=>setTimeout(applyDates,0));
+  observer.observe(document.documentElement,{subtree:true,childList:true});
 })();
 </script>
 
