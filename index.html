@@ -1318,23 +1318,49 @@ window.performSearch=function(){
 let FA_NEWS_UNSUBSCRIBE=null;
 async function loadNews(){
   try{
-    if(FA_NEWS_UNSUBSCRIBE) FA_NEWS_UNSUBSCRIBE();
+    if(typeof FA_NEWS_UNSUBSCRIBE === "function"){
+      try{ FA_NEWS_UNSUBSCRIBE(); }catch(e){}
+      FA_NEWS_UNSUBSCRIBE=null;
+    }
+
     const renderSnapshot=(snap)=>{
-      const items=snap.docs.map(normalizeNews).sort((a,b)=>b._time-a._time);
+      const items=snap.docs.map(normalizeNews).sort((a,b)=>{
+        const af=a._time||getTime(a.createdAt)||getTime(a.updatedAt)||0;
+        const bf=b._time||getTime(b.createdAt)||getTime(b.updatedAt)||0;
+        if(a.featured&&!b.featured) return -1;
+        if(!a.featured&&b.featured) return 1;
+        return bf-af;
+      });
       window.renderNews(items);
     };
-    try{
-      FA_NEWS_UNSUBSCRIBE=onSnapshot(query(collection(db,"news"),orderBy("createdAt","desc")),renderSnapshot,(error)=>{
-        console.warn("FA realtime news listener fallback:",error);
-        getDocs(collection(db,"news")).then(renderSnapshot).catch(()=>{});
-      });
-    }catch(e){
-      FA_NEWS_UNSUBSCRIBE=onSnapshot(collection(db,"news"),renderSnapshot);
-    }
+
+    /*
+      FA NEWS LIVE FIX
+      Do not use Firestore orderBy(createdAt) here.
+      Older/newer admin records may use createdAt, date, publishedAt or updatedAt.
+      A Firestore orderBy can silently omit documents that do not contain the
+      ordered field. Read the complete news collection, then sort locally.
+      This preserves the existing admin/Firebase structure and only fixes the
+      public homepage reader.
+    */
+    FA_NEWS_UNSUBSCRIBE=onSnapshot(
+      collection(db,"news"),
+      renderSnapshot,
+      (error)=>{
+        console.warn("FA realtime news listener error; using one-time fallback:",error);
+        getDocs(collection(db,"news"))
+          .then(renderSnapshot)
+          .catch(fallbackError=>{
+            console.error("FA news fallback error:",fallbackError);
+            const grid=document.getElementById("fa-json-news-grid");
+            if(grid) grid.innerHTML='<article class="fa-json-news-card featured"><div class="fa-news-body"><span class="fa-json-news-tag">تنبيه</span><h3>تعذر تحميل الأخبار</h3><p>تحقق من اتصال Firebase وقواعد Firestore.</p></div></article>';
+          });
+      }
+    );
   }catch(error){
     console.error("FA News Engine Error:",error);
     const grid=document.getElementById("fa-json-news-grid");
-    if(grid) grid.innerHTML='<article class="fa-json-news-card featured"><div class="fa-news-body"><span class="fa-json-news-tag">تنبيه</span><h3>تعذر تحميل الأخبار</h3><p>راجع إعدادات Firebase أو الاتصال.</p></div></article>';
+    if(grid) grid.innerHTML='<article class="fa-json-news-card featured"><div class="fa-news-body"><span class="fa-json-news-tag">تنبيه</span><h3>تعذر تحميل الأخبار</h3><p>تحقق من اتصال Firebase وقواعد Firestore.</p></div></article>';
   }
 }
 
